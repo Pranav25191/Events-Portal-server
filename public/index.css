@@ -1,0 +1,29 @@
+nav{
+    background-color: #333;
+    overflow: hidden;
+    height: 20px;
+
+}
+nav a{
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 40px;
+}
+nav a:hover{
+    color: rgb(14, 204, 204);
+}
+body{
+    margin:0%;
+}
+header{
+    background-color: aqua;
+}
+.title{
+    background-color: aqua;
+    padding: 20px;
+    color: rgb(255,255,255);
+    text-align: center;
+    font-size: 50px;
+    margin: 0%;
+}
