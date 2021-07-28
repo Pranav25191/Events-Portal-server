@@ -40,7 +40,8 @@ router.post("/interested", ensureAuth, (req, res) => {
           Myrequests: {
             Post_id: mongoose.Types.ObjectId(req.body.post_mong_id),
             Description: req.body.AlertDescription,
-            Status: false,
+            ReceivedDescription:"-",
+            Status: 1,
           },
         },
       }
@@ -57,8 +58,10 @@ router.post("/interested", ensureAuth, (req, res) => {
           ReceivedRequests: {
             Post_id: mongoose.Types.ObjectId(req.body.post_mong_id),
             Description: req.body.AlertDescription,
+            MyDescription:"-",
             Name: req.user.Name,
             RequestedUser_id: req.user.id,
+            Status:1
           },
         },
       }
@@ -69,4 +72,93 @@ router.post("/interested", ensureAuth, (req, res) => {
   saving();
 });
 
+
+
+router.get('/myrequests',ensureAuth,(req,res)=>{
+    const receivedrequests = req.user.Myrequests;
+    const datatobesent =[]
+    async function get_data(){
+        for(let i=0;i<receivedrequests.length;i++){
+            const result = await PostsSchema.findOne({
+                _id:receivedrequests[i].Post_id
+            })
+            // console.log(result)
+            const dummy={
+                post:result, 
+                Description:receivedrequests[i].Description, 
+                status:receivedrequests[i].Status
+            }
+            datatobesent.push(dummy);
+        }
+        console.log(datatobesent)
+        res.send(datatobesent);
+    }
+    get_data();
+})
+
+
+router.get('/receivedrequests',ensureAuth,(req,res)=>{
+    const receivedrequests = req.user.ReceivedRequests;
+    const datatobesent =[]
+    async function get_data(){
+        for(let i=0;i<receivedrequests.length;i++){
+            const result = await PostsSchema.findOne({
+                _id:receivedrequests[i].Post_id
+            })
+            // console.log(result)
+            const dummy={
+                post:result, Description:receivedrequests[i].Description, 
+                requestedUser_id:receivedrequests[i].RequestedUser_id, 
+                name:receivedrequests[i].Name,
+                status:receivedrequests[i].status
+            }
+            datatobesent.push(dummy);
+        }
+        console.log(datatobesent)
+        res.send(datatobesent);
+    }
+    get_data();
+
+
+});
+
+
+router.post("/confirmrequest",ensureAuth,(req,res)=>{
+    console.log(req.body);
+    const PostId= req.body.post_mong_id;
+    const requestedUser_id= req.body.requesteduserid;
+    const status=req.body.status;
+    const meetdescription= req.body.AlertDescription;
+
+    async function updatedata (){
+        const result=  await User.updateOne(
+                { _id: req.user.id, "ReceivedRequests.Post_id": PostId },
+                {
+                    $set: {
+                        "ReceivedRequests.$.Status": status,
+                        "ReceivedRequests.$.MyDescription":meetdescription
+                    }
+                }
+            )
+        console.log("Received request result",result);
+    } 
+    updatedata();
+    async function updatedata2 (){
+        const result = await User.updateOne(
+                { _id: requestedUser_id, "Myrequests.Post_id": PostId },
+                {
+                    $set: {
+                        "Myrequests.$.Status": status,
+                        "Myrequests.$.ReceivedDescription":meetdescription
+                    }
+                }
+            )
+        console.log("Myrequest result",result);
+    } 
+    updatedata2();
+    res.sendStatus(200);
+})
+
 module.exports = router;
+
+
