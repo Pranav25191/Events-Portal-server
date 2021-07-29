@@ -24,6 +24,7 @@ const userschema = new mongoose.Schema({
       Description: String,
       MyDescription:String,
       RequestedUser_id: mongoose.Schema.Types.ObjectId,
+      PostTitle: String,
       Status: Number
     },
   ],
@@ -31,8 +32,10 @@ const userschema = new mongoose.Schema({
     {
       Post_id: mongoose.Schema.Types.ObjectId,
       Description: String,
-      ReceivedDescription: String,
+      ReceivedDescription: String,   
       Status: Number,
+      PostOwner: String,
+      PostTitle: String
     },
   ],
 });
