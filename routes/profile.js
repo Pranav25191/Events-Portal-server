@@ -17,7 +17,6 @@ const ensureAuth = (req, res, next) => {
 router.get("/myposts", ensureAuth, (req, res) => {
   async function getdata() {
     const mypostdata = req.user.Myposts;
-    // console.log(mypostdata);
     let response = [];
     for (let i = 0; i < mypostdata.length; i++) {
       const data = await PostsSchema.findOne({
@@ -31,7 +30,6 @@ router.get("/myposts", ensureAuth, (req, res) => {
 });
 
 router.post("/interested", ensureAuth, (req, res) => {
-  //   console.log(req.body);
   async function saving() {
     const user_data = await PostsSchema.findOne({
       _id: mongoose.Types.ObjectId(req.body.post_mong_id),
@@ -51,10 +49,7 @@ router.post("/interested", ensureAuth, (req, res) => {
         },
       }
     );
-    console.log("noel kosam", saveddata);
-    // const user_data = await PostsSchema.findOne({
-    //   _id: mongoose.Types.ObjectId(req.body.post_mong_id),
-    // });
+
     const UserId = user_data.User_Id;
     const updatedata = await User.updateOne(
       { _id: UserId },
@@ -86,7 +81,7 @@ router.get("/myrequests", ensureAuth, (req, res) => {
       const result = await PostsSchema.findOne({
         _id: receivedrequests[i].Post_id,
       });
-      // console.log(result)
+
       const dummy = {
         post: result,
         Description: receivedrequests[i].Description,
@@ -98,7 +93,6 @@ router.get("/myrequests", ensureAuth, (req, res) => {
       };
       datatobesent.push(dummy);
     }
-    // console.log(datatobesent)
     res.send(datatobesent);
   }
   get_data();
@@ -112,26 +106,25 @@ router.get("/receivedrequests", ensureAuth, (req, res) => {
       const result = await PostsSchema.findOne({
         _id: receivedrequests[i].Post_id,
       });
-      // console.log(result)
       const dummy = {
         post: result,
         Description: receivedrequests[i].Description,
         requestedUser_id: receivedrequests[i].RequestedUser_id,
         MyDescription: receivedrequests[i].MyDescription,
         name: receivedrequests[i].Name,
-        status: receivedrequests[i].status,
+        status: receivedrequests[i].Status,
         PostTitle: receivedrequests[i].PostTitle,
+        _id: receivedrequests[i]._id,
       };
       datatobesent.push(dummy);
     }
-    // console.log(datatobesent)
     res.send(datatobesent);
   }
   get_data();
 });
 
-router.post("/confirmrequest", ensureAuth, (req, res) => {
-  console.log(req.body);
+router.post("/acceptrequest", ensureAuth, (req, res) => {
+  console.log("/acceptrequests", req.body);
   const PostId = req.body.post_mong_id;
   const requestedUser_id = req.body.requesteduserid;
   const status = req.body.status;
@@ -176,7 +169,7 @@ router.post("/myposts/delete", ensureAuth, (req, res) => {
       tobedeletedarray.push(array[i].RequestedUser_id);
     }
   }
-  console.log(tobedeletedarray);
+  console.log("here it is", tobedeletedarray);
   for (let i = 0; i < tobedeletedarray.length; i++) {
     async function updatedata2() {
       const result = await User.updateOne(
@@ -230,63 +223,159 @@ router.post("/myposts/delete", ensureAuth, (req, res) => {
     console.log(result);
   }
   mypostdelete1();
+  async function updatedreceivedrequests() {
+    const result = await User.updateOne(
+      {
+        _id: req.user.id,
+        "ReceivedRequests.Post_id": mongoose.Types.ObjectId(req.body.postid),
+      },
+      {
+        $set: {
+          "ReceivedRequests.$.Post_id": null,
+        },
+      }
+    );
+  }
+  updatedreceivedrequests();
   res.send("hi");
 });
 
-router.post("/myrequests/delete",ensureAuth,(req,res)=>{
-    const deletepostid=req.body.postid;
-    const status=req.body.status;
-    console.log("deleting post id",deletepostid)
-    async function myrequestdelete() {
-        if (status==5){
-            const result = await User.updateOne(
-                { _id: req.user.id },
-                {
-                $pull: {
-                    Myrequests: { _id: mongoose.Types.ObjectId(req.body.postid) },
-                },
-                }
-            );
+router.post("/myrequests/delete", ensureAuth, (req, res) => {
+  const deletepostid = req.body.postid;
+  const status = req.body.status;
+  console.log("deleting post id", deletepostid);
+  async function myrequestdelete() {
+    if (req.body.deleted) {
+      const result = await User.updateOne(
+        { _id: req.user.id },
+        {
+          $pull: {
+            Myrequests: { _id: mongoose.Types.ObjectId(req.body.postid) },
+          },
         }
-        else{
-            const result = await User.updateOne(
-                { _id: req.user.id },
-                {
-                $pull: {
-                    Myrequests: { Post_id: mongoose.Types.ObjectId(req.body.postid) },
-                },
-                }
-            );
+      );
+    } else {
+      const result = await User.updateOne(
+        { _id: req.user.id },
+        {
+          $pull: {
+            Myrequests: { Post_id: mongoose.Types.ObjectId(req.body.postid) },
+          },
         }
+      );
     }
-    myrequestdelete();
-    res.send("successfull");
-})
+  }
+  myrequestdelete();
+  res.send("successfull");
+});
 
-router.post("/myrequests/cancelrequest",ensureAuth,(req,res)=>{
-    const deletepostid=req.body.postid;
-    async function myrequestdelete() {
-        const post_data=await PostsSchema.findOne({_id:  mongoose.Types.ObjectId(deletepostid)})
-        const User_ID= post_data.User_Id;
-        const result = await User.updateOne(
-            { _id: User_ID },
-                {
-                $pull: {
-                    ReceivedRequests: { Post_id: mongoose.Types.ObjectId(req.body.postid) , RequestedUser_id:req.user.id},
-                },
-                }
-        );
-        const result1 = await User.updateOne(
-            { _id: req.user.id },
-                {
-                $pull: {
-                    Myrequests: { Post_id: mongoose.Types.ObjectId(req.body.postid) },
-                },
-            }
-        );
+router.post("/myrequests/cancelrequest", ensureAuth, (req, res) => {
+  const deletepostid = req.body.postid;
+  async function myrequestdelete() {
+    const post_data = await PostsSchema.findOne({
+      _id: mongoose.Types.ObjectId(deletepostid),
+    });
+    const User_ID = post_data.User_Id;
+    const result = await User.updateOne(
+      { _id: User_ID },
+      {
+        $pull: {
+          ReceivedRequests: {
+            Post_id: mongoose.Types.ObjectId(req.body.postid),
+            RequestedUser_id: req.user.id,
+          },
+        },
+      }
+    );
+    const result1 = await User.updateOne(
+      { _id: req.user.id },
+      {
+        $pull: {
+          Myrequests: { Post_id: mongoose.Types.ObjectId(req.body.postid) },
+        },
+      }
+    );
+  }
+  myrequestdelete();
+  res.send("successfull");
+});
+
+router.post("/rejectedrequest", ensureAuth, (req, res) => {
+  console.log("in reject request");
+  const postid = req.body.post_mong_id;
+  const status = req.body.status;
+  const requestedUser_id = req.body.requesteduserid;
+  async function receivedrequestdelete() {
+    const result = await User.updateOne(
+      { _id: req.user.id },
+      {
+        $pull: {
+          ReceivedRequests: {
+            Post_id: mongoose.Types.ObjectId(postid),
+            RequestedUser_id: mongoose.Types.ObjectId(requestedUser_id),
+          },
+        },
+      }
+    );
+    console.log(result);
+  }
+  receivedrequestdelete();
+
+  async function myrequestreject() {
+    const result = await User.updateOne(
+      {
+        _id: requestedUser_id,
+        "Myrequests.Post_id": mongoose.Types.ObjectId(postid),
+      },
+      {
+        $set: {
+          "Myrequests.$.Status": 0,
+        },
+      }
+    );
+  }
+  myrequestreject();
+});
+
+router.post("/deleteacceptedrequest", ensureAuth, (req, res) => {
+  const postid = req.body.post_mong_id;
+  console.log("post id is", postid);
+  const requesteduserid = req.body.requesteduserid;
+  if (req.body.deleted) {
+    async function acceptrequestdelete1() {
+      const result = await User.updateOne(
+        { _id: req.user.id },
+        {
+          $pull: {
+            ReceivedRequests: {
+              _id: mongoose.Types.ObjectId(postid),
+              RequestedUser_id: mongoose.Types.ObjectId(requesteduserid),
+            },
+          },
+        }
+      );
+      console.log("eeda unaa", result);
     }
-    myrequestdelete();
-    res.send("successfull");
-})
+    acceptrequestdelete1();
+  } else {
+    console.log("vishnu");
+    async function acceptrequestdelete() {
+      const result = await User.updateOne(
+        { _id: req.user.id },
+        {
+          $pull: {
+            ReceivedRequests: {
+              Post_id: mongoose.Types.ObjectId(postid),
+              RequestedUser_id: mongoose.Types.ObjectId(requesteduserid),
+            },
+          },
+        }
+      );
+      console.log(result);
+    }
+    acceptrequestdelete();
+  }
+  res.send("succesfull");
+});
 
 module.exports = router;

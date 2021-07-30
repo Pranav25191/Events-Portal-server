@@ -2,19 +2,19 @@ const express = require("express");
 const app = express();
 const passport = require("passport");
 const loginroute = require("./routes/route");
-const profileroute=require("./routes/profile")
+const profileroute = require("./routes/profile");
 const passportSetup = require("./config/passport-setup");
 const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const cors = require("cors");
 const teamup_route = require("./routes/teamuproutes");
-const keys = require("./config/keys")
+const keys = require("./config/keys");
 
 // for parsing application/json
-app.use(express.json()); 
+app.use(express.json());
 
 // for parsing application/xwww-
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
 //for port to port communication.
 app.use(
@@ -26,7 +26,7 @@ app.use(
 //for connecting to mongodb atlas using mongoose.
 mongoose
   .connect(
-    `mongodb+srv://${keys.mongodbatlas.project_name}:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    `mongodb+srv://${keys.mongodbatlas.project_name}:${keys.mongodbatlas.password}@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {
       useCreateIndex: true,
       useNewUrlParser: true,
@@ -36,13 +36,13 @@ mongoose
   )
   .then(() => console.log("connected with mongodb........"))
   .catch((err) => console.error("could not connect to mongo db", err));
-  
+
 //public folder files are used from here.
 app.use(express.static("public"));
 
 // we are sending all the responses by adding these additional headers.
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000"); 
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -52,11 +52,11 @@ app.use(function (req, res, next) {
 
 app.set("view engine", "ejs");
 
-//This integrates with the passport. It is used to create a cookie (JWT) which is stored in the client's browser but not in our server. 
+//This integrates with the passport. It is used to create a cookie (JWT) which is stored in the client's browser but not in our server.
 app.use(
   cookieSession({
     maxAge: 60 * 1000 * 30,
-    keys: ["abcdefghijklmopqrstuvwxyz"]
+    keys: ["abcdefghijklmopqrstuvwxyz"],
   })
 );
 
@@ -82,11 +82,10 @@ const ensureGuest = (req, res, next) => {
   }
 };
 
-
 //all teamup are routes goes through here
 app.use("/teamup", teamup_route);
 
-app.use("/Profile",profileroute);
+app.use("/Profile", profileroute);
 
 app.get("/", ensureGuest, (req, res) => {
   res.redirect("/login");
@@ -133,10 +132,9 @@ app.get(
 // })
 
 app.get("/logout", (req, res) => {
-    req.logout();
-    res.redirect('home');
+  req.logout();
+  res.redirect("home");
 });
-
 
 app.get("/teamup", ensureAuth, (req, res) => {
   res.send({
@@ -151,7 +149,6 @@ app.get("/internship", ensureAuth, (req, res) => {
     company: "amazon",
   });
 });
-
 
 app.listen(4444, () => {
   console.log("Listening on port 4444");
