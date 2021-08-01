@@ -26,7 +26,8 @@ app.use(
 //for connecting to mongodb atlas using mongoose.
 mongoose
   .connect(
-    `mongodb+srv://${keys.mongodbatlas.project_name}:${keys.mongodbatlas.password}@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    "mongodb://localhost:/web_portal",
+    // `mongodb+srv://${keys.mongodbatlas.project_name}:${keys.mongodbatlas.password}@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {
       useCreateIndex: true,
       useNewUrlParser: true,

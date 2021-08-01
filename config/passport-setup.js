@@ -21,7 +21,7 @@ passport.use(
       clientSecret: keys.google.clientSecret,
       callbackURL: "http://localhost:4444/auth",
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       const data = new User({
         Name: profile.displayName,
         Mail_Id: profile.emails[0].value,
