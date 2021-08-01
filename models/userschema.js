@@ -22,20 +22,20 @@ const userschema = new mongoose.Schema({
       Post_id: mongoose.Schema.Types.ObjectId,
       Name: String,
       Description: String,
-      MyDescription:String,
+      MyDescription: String,
       RequestedUser_id: mongoose.Schema.Types.ObjectId,
       PostTitle: String,
-      Status: Number
+      Status: Number,
     },
   ],
   Myrequests: [
     {
       Post_id: mongoose.Schema.Types.ObjectId,
       Description: String,
-      ReceivedDescription: String,   
+      ReceivedDescription: String,
       Status: Number,
       PostOwner: String,
-      PostTitle: String
+      PostTitle: String,
     },
   ],
 });

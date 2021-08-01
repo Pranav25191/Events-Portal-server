@@ -3,6 +3,7 @@ const app = express();
 const passport = require("passport");
 const loginroute = require("./routes/route");
 const profileroute = require("./routes/profile");
+const Editroutes = require("./routes/edit");
 const passportSetup = require("./config/passport-setup");
 const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
@@ -85,7 +86,7 @@ const ensureGuest = (req, res, next) => {
 
 //all teamup are routes goes through here
 app.use("/teamup", teamup_route);
-
+app.use("/edit", Editroutes);
 app.use("/Profile", profileroute);
 
 app.get("/", ensureGuest, (req, res) => {
