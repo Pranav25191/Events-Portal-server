@@ -14,6 +14,32 @@ const ensureAuth = (req, res, next) => {
   }
 };
 
+router.get("/", ensureAuth, (req, res) => {
+  console.log("mypofile lopala ki ochina");
+  async function getdata() {
+    let data = await User.findOne({
+      _id: req.user.id,
+    });
+    const str = data.Mail_Id.split(".");
+    let year = "";
+    if (str[1][0] == 1 || str[1][0] == 2) {
+      year = "20" + str[1][0] + str[1][1];
+    } else {
+      year = "20" + str[2][0] + str[2][1];
+    }
+    data["year"] = year;
+    console.log(data);
+    const datatobesent = {
+      Name: data.Name,
+      Mail_Id: data.Mail_Id,
+      user_profile: data.user_profile,
+      year: year,
+    };
+    res.send(datatobesent);
+  }
+  getdata();
+});
+
 router.get("/myposts", ensureAuth, (req, res) => {
   async function getdata() {
     const mypostdata = req.user.Myposts;
