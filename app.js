@@ -4,11 +4,13 @@ const passport = require("passport");
 const loginroute = require("./routes/route");
 const profileroute = require("./routes/profile");
 const Editroutes = require("./routes/edit");
+const teamup_route = require("./routes/teamuproutes");
+const internship_route = require("./routes/Internshiproutes");
 const passportSetup = require("./config/passport-setup");
 const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const cors = require("cors");
-const teamup_route = require("./routes/teamuproutes");
+
 const keys = require("./config/keys");
 
 // for parsing application/json
@@ -88,6 +90,7 @@ const ensureGuest = (req, res, next) => {
 app.use("/teamup", teamup_route);
 app.use("/edit", Editroutes);
 app.use("/Profile", profileroute);
+app.use("/internships", internship_route);
 
 app.get("/", ensureGuest, (req, res) => {
   res.redirect("/login");
