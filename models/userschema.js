@@ -8,7 +8,7 @@ const userschema = new mongoose.Schema({
   Myposts: [
     {
       Post_id: mongoose.Schema.Types.ObjectId,
-      Type: String,
+      Type: Number,
     },
   ],
   Starred: [
