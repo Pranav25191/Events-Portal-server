@@ -89,18 +89,22 @@ router.post("/submit", ensureAuth, (req, res) => {
 });
 
 router.get("/", ensureAuth, (req, res) => {
-  console.log("inside function");
+  console.log("inside  / function");
   const get_data = async () => {
-    const postdata = await internshipschema.find({
-      Type: 2,
-    });
+    const postdata = await internshipschema.find(
+      {
+        Type: 2,
+      },
+      { "Files.data": 0 }
+    );
+    console.log(postdata[0].Files);
     const datatobesent = [];
     for (let i = 0; i < postdata.length; i++) {
       const files = [];
       for (let j = 0; j < postdata[i].Files.length; j++) {
         files.push({
           FileName: postdata[i].Files[j].fileName,
-          FileType: postdata[i].Files.contentType,
+          FileType: postdata[i].Files[j].contentType,
         });
       }
       const post = {
@@ -109,11 +113,12 @@ router.get("/", ensureAuth, (req, res) => {
         User_Id: postdata[i].User_Id,
         Role: postdata[i].RoleIntern,
         Company: postdata[i].CompanyIntern,
+        Branches: postdata[i].BranchesIntern,
         Duration: postdata[i].DurationIntern,
         Stipend: postdata[i].StipendIntern,
         Deadline: postdata[i].DeadlineIntern,
         Description: postdata[i].DescriptionIntern,
-        Files: files,
+        FilesName: files,
       };
       datatobesent.push(post);
     }
@@ -146,6 +151,30 @@ router.post("/readmore", ensureAuth, (req, res) => {
     res.send(post);
   };
   get_data();
+});
+
+router.post("/delete", ensureAuth, (req, res) => {
+  const postid = req.body.postid;
+  console.log(postid);
+  async function mypostdelete() {
+    const result = await User.updateOne(
+      { _id: req.user.id },
+      {
+        $pull: {
+          Myposts: { Post_id: mongoose.Types.ObjectId(req.body.postid) },
+        },
+      }
+    );
+  }
+  mypostdelete();
+  async function postdelete() {
+    const result = await internshipschema.deleteOne({
+      _id: mongoose.Types.ObjectId(req.body.postid),
+    });
+    console.log(result);
+    res.send("successfully deleted");
+  }
+  postdelete();
 });
 
 module.exports = router;

@@ -45,11 +45,31 @@ router.get("/myposts", ensureAuth, (req, res) => {
     const mypostdata = req.user.Myposts;
     let response = [];
     for (let i = 0; i < mypostdata.length; i++) {
-      const data = await PostsSchema.findOne({
-        _id: mypostdata[i].Post_id,
-      });
-      response.push(data);
+      const data = await PostsSchema.findOne(
+        {
+          _id: mypostdata[i].Post_id,
+        },
+        { "File.data": 0 }
+      );
+      if (data.Type == 1) {
+        response.push(data);
+      } else if (data.Type == 2) {
+        const post = {
+          _id: data.id,
+          Name: data.Name,
+          User_Id: data.User_Id,
+          Role: data.RoleIntern,
+          Company: data.CompanyIntern,
+          Duration: data.DurationIntern,
+          Stipend: data.StipendIntern,
+          Deadline: data.DeadlineIntern,
+          Description: data.DescriptionIntern,
+          Type: data.Type,
+        };
+        response.push(post);
+      }
     }
+
     res.send(response);
   }
   getdata();
