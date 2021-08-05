@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
     );
   },
 });
+
 const upload = multer({
   storage: storage,
   limits: { fileSize: 10000000 },
@@ -97,7 +98,7 @@ router.get("/", ensureAuth, (req, res) => {
       },
       { "Files.data": 0 }
     );
-    console.log(postdata[0].Files);
+    // console.log(postdata[0].Files);
     const datatobesent = [];
     for (let i = 0; i < postdata.length; i++) {
       const files = [];
@@ -177,7 +178,79 @@ router.post("/delete", ensureAuth, (req, res) => {
   postdelete();
 });
 
+router.post("/edit", ensureAuth, (req, res) => {
+  console.log(req.body.postid.id);
+  const get_data = async () => {
+    const fetchdata = await internshipschema.findOne({
+      _id: mongoose.Types.ObjectId(req.body.postid.id),
+    });
+    // console.log(fetchdata);
+    const post = {
+      _id: fetchdata.id,
+      Name: fetchdata.Name,
+      User_Id: fetchdata.User_Id,
+      Role: fetchdata.RoleIntern,
+      Company: fetchdata.CompanyIntern,
+      Duration: fetchdata.DurationIntern,
+      Branches: fetchdata.BranchesIntern,
+      Stipend: fetchdata.StipendIntern,
+      Deadline: fetchdata.DeadlineIntern,
+      Description: fetchdata.DescriptionIntern,
+      Files: fetchdata.Files,
+    };
+    res.send(post);
+  };
+  get_data();
+});
+
+router.post("/edit/submit", ensureAuth, (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      console.log("post id", req.body.postid);
+
+      const uploadpost = async () => {
+        let filesList = [];
+        let flist = req.files;
+        for (let i = 0; i < flist.length; i++) {
+          filesList.push({
+            data: fs.readFileSync(
+              Path.join(
+                "/home/noel/Desktop/Events-Portal-server/uploadedFiles/" +
+                  flist[i].filename
+              )
+            ),
+            contentType: flist[i].mimetype,
+            fileName: flist[i].originalname,
+          });
+        }
+
+        const result = await internshipschema.updateOne(
+          { _id: mongoose.Types.ObjectId(req.body.postid) },
+          {
+            $set: {
+              RoleIntern: req.body.role,
+              CompanyIntern: req.body.company,
+              DurationIntern: req.body.duration,
+              StipendIntern: req.body.stipend,
+              BranchesIntern: req.body.branches.split(","),
+              DeadlineIntern: req.body.deadline,
+              DescriptionIntern: req.body.description,
+              Files: filesList,
+            },
+          }
+        );
+        console.log("Received request result", result);
+        res.send("fine");
+      };
+      uploadpost();
+    }
+  });
+});
+
 module.exports = router;
+
 // router.use(upload2.array());
 // const fileUpload = require("express-fileupload");
 // router.use(fileUpload());
@@ -244,3 +317,80 @@ module.exports = router;
 //     console.log("No file");
 //     return res.status(400).json({msg:'No file uploaded'});
 // }
+// router.post("/edit/submit", ensureAuth, (req, res) => {
+//   // const postid = req.body.postid;
+//   // console.log(postid);
+//   async function mypostdelete(postid) {
+//     const result = await User.updateOne(
+//       { _id: req.user.id },
+//       {
+//         $pull: {
+//           Myposts: { Post_id: mongoose.Types.ObjectId(postid) },
+//         },
+//       }
+//     );
+//   }
+
+//   async function postdelete(postid) {
+//     const result = await internshipschema.deleteOne({
+//       _id: mongoose.Types.ObjectId(postid),
+//     });
+//     console.log("deleted post in post collection ", result);
+//     // res.send("successfully deleted");
+//   }
+//   upload(req, res, (err) => {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       console.log("post id", req.body.postid);
+//       mypostdelete(req.body.postid);
+//       postdelete(req.body.postid);
+//       // console.log(req.files);
+//       const uploadpost = async () => {
+//         let filesList = [];
+//         let flist = req.files;
+//         for (let i = 0; i < flist.length; i++) {
+//           filesList.push({
+//             data: fs.readFileSync(
+//               Path.join(
+//                 "/home/noel/Desktop/Events-Portal-server/uploadedFiles/" +
+//                   flist[i].filename
+//               )
+//             ),
+//             contentType: flist[i].mimetype,
+//             fileName: flist[i].originalname,
+//           });
+//         }
+
+//         const datatobeuploaded = new internshipschema({
+//           Type: 2,
+//           Name: req.user.Name,
+//           User_Id: req.user.id,
+//           RoleIntern: req.body.role,
+//           CompanyIntern: req.body.company,
+//           DurationIntern: req.body.duration,
+//           StipendIntern: req.body.stipend,
+//           BranchesIntern: req.body.branches.split(","),
+//           DeadlineIntern: req.body.deadline,
+//           DescriptionIntern: req.body.description,
+//           Files: filesList,
+//         });
+//         const result = await datatobeuploaded.save();
+//         const result2 = await User.updateOne(
+//           { _id: req.user.id },
+//           {
+//             $push: {
+//               Myposts: {
+//                 Post_id: mongoose.Types.ObjectId(result.id),
+//                 Type: 2,
+//               },
+//             },
+//           }
+//         );
+//         console.log(result2);
+//       };
+//       uploadpost();
+//     }
+//   });
+//   res.send("fine");
+// });
