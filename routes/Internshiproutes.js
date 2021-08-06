@@ -81,7 +81,7 @@ router.post("/submit", ensureAuth, (req, res) => {
             },
           }
         );
-        console.log(result2);
+        // console.log(result2);
       };
       uploadpost();
       res.send("fine");
@@ -90,7 +90,7 @@ router.post("/submit", ensureAuth, (req, res) => {
 });
 
 router.get("/", ensureAuth, (req, res) => {
-  console.log("inside  / function");
+  // console.log("inside  / function");
   const get_data = async () => {
     const postdata = await internshipschema.find(
       {
@@ -108,6 +108,26 @@ router.get("/", ensureAuth, (req, res) => {
           FileType: postdata[i].Files[j].contentType,
         });
       }
+      let starred = false;
+      for (let k = 0; k < req.user.StarredIntern.length; k++) {
+        // console.log(postdata[i].id, " ", req.user.StarredIntern[k].Post_id);
+        if (postdata[i].id == req.user.StarredIntern[k].Post_id) {
+          starred = true;
+          break;
+        }
+      }
+      // const starred = false;
+      // if (req.user.StarredIntern.includes({ Post_id: postdata[i].id })) {
+      //   starred = true;
+      // }
+      // var __FOUND = req.user.StarredIntern.find(function (post, index) {
+      //   if (post.Post_id == postdata[i].id) {
+      //     starred = true;
+      //     return;
+      //   }
+      // });
+
+      // console.log(postdata[i].RoleIntern, " ", starred);
       const post = {
         _id: postdata[i].id,
         Name: postdata[i].Name,
@@ -120,6 +140,7 @@ router.get("/", ensureAuth, (req, res) => {
         Deadline: postdata[i].DeadlineIntern,
         Description: postdata[i].DescriptionIntern,
         FilesName: files,
+        Starred: starred,
       };
       datatobesent.push(post);
     }
@@ -136,27 +157,31 @@ router.post("/readmore", ensureAuth, (req, res) => {
       _id: mongoose.Types.ObjectId(req.body.postid),
     });
     // console.log(fetchdata);
-    const post = {
-      _id: fetchdata.id,
-      Name: fetchdata.Name,
-      User_Id: fetchdata.User_Id,
-      Role: fetchdata.RoleIntern,
-      Company: fetchdata.CompanyIntern,
-      Duration: fetchdata.DurationIntern,
-      Branches: fetchdata.BranchesIntern,
-      Stipend: fetchdata.StipendIntern,
-      Deadline: fetchdata.DeadlineIntern,
-      Description: fetchdata.DescriptionIntern,
-      Files: fetchdata.Files,
-    };
-    res.send(post);
+    if (fetchdata != null) {
+      const post = {
+        _id: fetchdata.id,
+        Name: fetchdata.Name,
+        User_Id: fetchdata.User_Id,
+        Role: fetchdata.RoleIntern,
+        Company: fetchdata.CompanyIntern,
+        Duration: fetchdata.DurationIntern,
+        Branches: fetchdata.BranchesIntern,
+        Stipend: fetchdata.StipendIntern,
+        Deadline: fetchdata.DeadlineIntern,
+        Description: fetchdata.DescriptionIntern,
+        Files: fetchdata.Files,
+      };
+      res.send(post);
+    } else {
+      res.send("post deleted");
+    }
   };
   get_data();
 });
 
 router.post("/delete", ensureAuth, (req, res) => {
   const postid = req.body.postid;
-  console.log(postid);
+  // console.log(postid);
   async function mypostdelete() {
     const result = await User.updateOne(
       { _id: req.user.id },
@@ -172,14 +197,14 @@ router.post("/delete", ensureAuth, (req, res) => {
     const result = await internshipschema.deleteOne({
       _id: mongoose.Types.ObjectId(req.body.postid),
     });
-    console.log(result);
+    // console.log(result);
     res.send("successfully deleted");
   }
   postdelete();
 });
 
 router.post("/edit", ensureAuth, (req, res) => {
-  console.log(req.body.postid.id);
+  // console.log(req.body.postid.id);
   const get_data = async () => {
     const fetchdata = await internshipschema.findOne({
       _id: mongoose.Types.ObjectId(req.body.postid.id),
@@ -208,7 +233,7 @@ router.post("/edit/submit", ensureAuth, (req, res) => {
     if (err) {
       res.send(err);
     } else {
-      console.log("post id", req.body.postid);
+      // console.log("post id", req.body.postid);
 
       const uploadpost = async () => {
         let filesList = [];
@@ -241,7 +266,7 @@ router.post("/edit/submit", ensureAuth, (req, res) => {
             },
           }
         );
-        console.log("Received request result", result);
+        // console.log("Received request result", result);
         res.send("fine");
       };
       uploadpost();

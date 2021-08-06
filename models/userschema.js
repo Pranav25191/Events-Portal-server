@@ -11,10 +11,16 @@ const userschema = new mongoose.Schema({
       Type: Number,
     },
   ],
-  Starred: [
+  StarredIntern: [
     {
       Post_id: mongoose.Schema.Types.ObjectId,
-      Type: String,
+      Type: Number,
+    },
+  ],
+  StarredEvents: [
+    {
+      Post_id: mongoose.Schema.Types.ObjectId,
+      Type: Number,
     },
   ],
   ReceivedRequests: [
