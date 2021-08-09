@@ -15,7 +15,7 @@ const ensureAuth = (req, res, next) => {
 };
 
 router.get("/", ensureAuth, (req, res) => {
-  console.log("mypofile lopala ki ochina");
+//   console.log("mypofile lopala ki ochina");
   async function getdata() {
     let data = await User.findOne({
       _id: req.user.id,
@@ -28,7 +28,7 @@ router.get("/", ensureAuth, (req, res) => {
       year = "20" + str[2][0] + str[2][1];
     }
     data["year"] = year;
-    console.log(data);
+    // console.log(data);
     const datatobesent = {
       Name: data.Name,
       Mail_Id: data.Mail_Id,
@@ -45,11 +45,31 @@ router.get("/myposts", ensureAuth, (req, res) => {
     const mypostdata = req.user.Myposts;
     let response = [];
     for (let i = 0; i < mypostdata.length; i++) {
-      const data = await PostsSchema.findOne({
-        _id: mypostdata[i].Post_id,
-      });
-      response.push(data);
+      const data = await PostsSchema.findOne(
+        {
+          _id: mypostdata[i].Post_id,
+        },
+        { "File.data": 0 }
+      );
+      if (data.Type == 1) {
+        response.push(data);
+      } else if (data.Type == 2) {
+        const post = {
+          _id: data.id,
+          Name: data.Name,
+          User_Id: data.User_Id,
+          Role: data.RoleIntern,
+          Company: data.CompanyIntern,
+          Duration: data.DurationIntern,
+          Stipend: data.StipendIntern,
+          Deadline: data.DeadlineIntern,
+          Description: data.DescriptionIntern,
+          Type: data.Type,
+        };
+        response.push(post);
+      }
     }
+
     res.send(response);
   }
   getdata();
@@ -187,7 +207,7 @@ router.post("/acceptrequest", ensureAuth, (req, res) => {
 
 router.post("/myposts/delete", ensureAuth, (req, res) => {
   const datatobedeleted = toString(req.body.postid);
-  console.log("delete data mongo id", datatobedeleted);
+//   console.log("delete data mongo id", datatobedeleted);
   const array = req.user.ReceivedRequests;
   const tobedeletedarray = [];
   for (let i = 0; i < array.length; i++) {
@@ -195,7 +215,7 @@ router.post("/myposts/delete", ensureAuth, (req, res) => {
       tobedeletedarray.push(array[i].RequestedUser_id);
     }
   }
-  console.log("here it is", tobedeletedarray);
+//   console.log("here it is", tobedeletedarray);
   for (let i = 0; i < tobedeletedarray.length; i++) {
     async function updatedata2() {
       const result = await User.updateOne(
@@ -221,18 +241,18 @@ router.post("/myposts/delete", ensureAuth, (req, res) => {
         },
       }
     );
-    console.log(result);
+    // console.log(result);
   }
   mypostdelete();
-  console.log("post id ", mongoose.Types.ObjectId(req.body.postid));
+//   console.log("post id ", mongoose.Types.ObjectId(req.body.postid));
   async function postdelete() {
     const result = await PostsSchema.remove({
       _id: mongoose.Types.ObjectId(req.body.postid),
     });
-    console.log(result);
+    // console.log(result);
   }
   postdelete();
-  console.log("post id ", mongoose.Types.ObjectId(req.body.postid));
+//   console.log("post id ", mongoose.Types.ObjectId(req.body.postid));
 
   async function mypostdelete1() {
     const result = await User.updateOne(
@@ -246,7 +266,7 @@ router.post("/myposts/delete", ensureAuth, (req, res) => {
         },
       }
     );
-    console.log(result);
+    // console.log(result);
   }
   mypostdelete1();
   async function updatedreceivedrequests() {
@@ -269,7 +289,7 @@ router.post("/myposts/delete", ensureAuth, (req, res) => {
 router.post("/myrequests/delete", ensureAuth, (req, res) => {
   const deletepostid = req.body.postid;
   const status = req.body.status;
-  console.log("deleting post id", deletepostid);
+//   console.log("deleting post id", deletepostid);
   async function myrequestdelete() {
     if (req.body.deleted) {
       const result = await User.updateOne(
@@ -327,7 +347,7 @@ router.post("/myrequests/cancelrequest", ensureAuth, (req, res) => {
 });
 
 router.post("/rejectedrequest", ensureAuth, (req, res) => {
-  console.log("in reject request");
+//   console.log("in reject request");
   const postid = req.body.post_mong_id;
   const status = req.body.status;
   const requestedUser_id = req.body.requesteduserid;
@@ -343,7 +363,7 @@ router.post("/rejectedrequest", ensureAuth, (req, res) => {
         },
       }
     );
-    console.log(result);
+    // console.log(result);
   }
   receivedrequestdelete();
 
@@ -366,7 +386,7 @@ router.post("/rejectedrequest", ensureAuth, (req, res) => {
 
 router.post("/deleteacceptedrequest", ensureAuth, (req, res) => {
   const postid = req.body.post_mong_id;
-  console.log("post id is", postid);
+//   console.log("post id is", postid);
   const requesteduserid = req.body.requesteduserid;
   if (req.body.deleted) {
     async function acceptrequestdelete1() {
@@ -381,11 +401,11 @@ router.post("/deleteacceptedrequest", ensureAuth, (req, res) => {
           },
         }
       );
-      console.log("eeda unaa", result);
+    //   console.log("eeda unaa", result);
     }
     acceptrequestdelete1();
   } else {
-    console.log("vishnu");
+    // console.log("vishnu");
     async function acceptrequestdelete() {
       const result = await User.updateOne(
         { _id: req.user.id },
@@ -398,7 +418,7 @@ router.post("/deleteacceptedrequest", ensureAuth, (req, res) => {
           },
         }
       );
-      console.log(result);
+    //   console.log(result);
     }
     acceptrequestdelete();
   }

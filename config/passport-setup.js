@@ -22,6 +22,7 @@ passport.use(
       callbackURL: "http://localhost:4444/auth",
     },
     async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
       const data = new User({
         Name: profile.displayName,
         Mail_Id: profile.emails[0].value,

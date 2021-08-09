@@ -5,6 +5,8 @@ const loginroute = require("./routes/route");
 const profileroute = require("./routes/profile");
 const Editroutes = require("./routes/edit");
 const teamup_route = require("./routes/teamuproutes");
+const starred = require("./routes/starred");
+const home = require("./routes/home");
 const internship_route = require("./routes/Internshiproutes");
 const passportSetup = require("./config/passport-setup");
 const mongoose = require("mongoose");
@@ -30,7 +32,7 @@ app.use(
 mongoose
   .connect(
     // "mongodb://localhost:/web_portal",
-    `mongodb+srv://${keys.mongodbatlas.project_name}:${keys.mongodbatlas.password}@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    `mongodb+srv://summerproject:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {
       useCreateIndex: true,
       useNewUrlParser: true,
@@ -59,7 +61,7 @@ app.set("view engine", "ejs");
 //This integrates with the passport. It is used to create a cookie (JWT) which is stored in the client's browser but not in our server.
 app.use(
   cookieSession({
-    maxAge: 60 * 1000 * 30,
+    maxAge: 30 * 60 * 1000,
     keys: ["abcdefghijklmopqrstuvwxyz"],
   })
 );
@@ -91,6 +93,8 @@ app.use("/teamup", teamup_route);
 app.use("/edit", Editroutes);
 app.use("/Profile", profileroute);
 app.use("/internships", internship_route);
+app.use("/starred", starred);
+app.use("/home", home);
 
 app.get("/", ensureGuest, (req, res) => {
   res.redirect("/login");
@@ -108,9 +112,13 @@ app.get(
   })
 );
 
-app.get("/home", ensureAuth, (req, res) => {
-  res.send({ mail: "jhde@iitgoa.ac.in" });
-});
+// app.get("/home", ensureAuth, (req, res) => {
+//     let starredinternarray=[];
+//     let starredeventarray=[];
+//     for(let i=0;i<req.user.StarredIntern.length;i++){
+
+//     }
+// });
 
 // app.get("/allowcors", (req, res) => {
 //   res.set("Access-Control-Allow-Origin", "*");
@@ -138,7 +146,8 @@ app.get(
 
 app.get("/logout", (req, res) => {
   req.logout();
-  res.redirect("home");
+  // res.redirect("home");
+  res.send("notloggedin");
 });
 
 app.get("/teamup", ensureAuth, (req, res) => {

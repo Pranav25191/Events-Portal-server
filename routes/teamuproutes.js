@@ -18,7 +18,7 @@ const ensureAuth = (req, res, next) => {
 router.post("/submit", ensureAuth, (req, res) => {
   const data = new teamupschema({
     Name: req.user.Name,
-    Type: "Teamup",
+    Type: 1,
     User_Id: req.user.id,
     Requirements: req.body.title,
     Skill: req.body.skill,
@@ -29,7 +29,7 @@ router.post("/submit", ensureAuth, (req, res) => {
     const result = await data.save();
     const mypostarray = req.user.Myposts.push({
       Post_id: result.id,
-      Type: "Teamup",
+      Type: 1,
     });
     // console.log(mypostarray);
     const saveddata = await User.updateOne(
@@ -38,7 +38,7 @@ router.post("/submit", ensureAuth, (req, res) => {
         $push: {
           Myposts: {
             Post_id: result.id,
-            Type: "Teamup",
+            Type: 1,
           },
         },
       }
@@ -51,20 +51,20 @@ router.post("/submit", ensureAuth, (req, res) => {
 router.get("/", ensureAuth, (req, res) => {
   async function getdata() {
     const data = await teamupschema.find({
-      Type: "Teamup",
+      Type: 1,
       User_Id: { $ne: req.user.id },
     });
-    let datatobesent=[] ;
-    const reqArray=req.user.Myrequests
-    for(let i=0;i<data.length;i++){
-        flag=true
-        for(let j=0;j<reqArray.length;j++){
-            if (data[i].id==reqArray[j].Post_id){
-                flag=false;
-                break;
-            }
+    let datatobesent = [];
+    const reqArray = req.user.Myrequests;
+    for (let i = 0; i < data.length; i++) {
+      flag = true;
+      for (let j = 0; j < reqArray.length; j++) {
+        if (data[i].id == reqArray[j].Post_id) {
+          flag = false;
+          break;
         }
-        if (flag==true) datatobesent.push(data[i]);
+      }
+      if (flag == true) datatobesent.push(data[i]);
     }
     // console.log(datatobesent);
     // console.log(data);

@@ -7,12 +7,7 @@ app.use(express.static("public"));
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: [
-      "profile",
-      "https://www.googleapis.com/auth/plus.login",
-      "https://www.googleapis.com/auth/userinfo.email",
-      "calendar",
-    ],
+    scope: ["profile", "email"],
   })
 );
 

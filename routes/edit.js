@@ -84,10 +84,11 @@ router.post("/teamup/update", ensureAuth, (req, res) => {
           console.log(updaterequest);
         }
       }
-
       res.send("sucess");
     }
     updatedata2();
+  } else {
+    res.send("success");
   }
 });
 
