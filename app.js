@@ -62,7 +62,7 @@ app.set("view engine", "ejs");
 //This integrates with the passport. It is used to create a cookie (JWT) which is stored in the client's browser but not in our server.
 app.use(
   cookieSession({
-    maxAge: 10 * 1000,
+    maxAge: 30 * 60 * 1000,
     keys: ["abcdefghijklmopqrstuvwxyz"],
   })
 );
