@@ -159,7 +159,7 @@ router.post("/readmore", ensureAuth, (req, res) => {
         _id: mongoose.Types.ObjectId(req.body.postid),
       });
     } catch (err) {
-      return res.send("404");
+      return res.sendStatus("404");
     }
     // console.log(fetchdata);
     if (fetchdata != null) {

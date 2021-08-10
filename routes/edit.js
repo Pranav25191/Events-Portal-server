@@ -17,7 +17,7 @@ const ensureAuth = (req, res, next) => {
 router.post("/teamup/getpost", ensureAuth, (req, res) => {
   // console.log(req.)
   if (req.body.postid !== null) {
-    const postid = req.body.postid.id;
+    const postid = req.body.postid;
     console.log("inside function", postid);
     let geteditpost = async () => {
       const getpostdata = await PostsSchema.findOne({
