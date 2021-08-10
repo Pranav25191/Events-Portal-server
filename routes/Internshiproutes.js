@@ -58,7 +58,7 @@ router.post("/submit", ensureAuth, (req, res) => {
             fileName: flist[i].originalname,
           });
         }
-
+        console.log(req.body.deadline);
         const datatobeuploaded = new internshipschema({
           Type: 2,
           Name: req.user.Name,
@@ -153,9 +153,14 @@ router.get("/", ensureAuth, (req, res) => {
 router.post("/readmore", ensureAuth, (req, res) => {
   console.log(req.body.postid);
   const get_data = async () => {
-    const fetchdata = await internshipschema.findOne({
-      _id: mongoose.Types.ObjectId(req.body.postid),
-    });
+    let fetchdata = "";
+    try {
+      fetchdata = await internshipschema.findOne({
+        _id: mongoose.Types.ObjectId(req.body.postid),
+      });
+    } catch (err) {
+      return res.sendStatus("404");
+    }
     // console.log(fetchdata);
     if (fetchdata != null) {
       const post = {

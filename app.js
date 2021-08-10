@@ -32,7 +32,6 @@ app.use(
 mongoose
   .connect(
     // "mongodb://localhost:/web_portal",
-    // `mongodb+srv://${keys.mongodbatlas.project_name}:${keys.mongodbatlas.password}@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     `mongodb+srv://summerproject:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {
       useCreateIndex: true,
