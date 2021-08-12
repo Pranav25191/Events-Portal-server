@@ -13,7 +13,7 @@ const Postschema = new mongoose.Schema({
   DurationIntern: String,
   StipendIntern: String,
   BranchesIntern: [String],
-  DeadlineIntern: Date,
+  DeadlineIntern: { type: Date, expires: 0 },
   DescriptionIntern: String,
   Files: [
     {
@@ -22,7 +22,10 @@ const Postschema = new mongoose.Schema({
       fileName: String,
     },
   ],
+  //   createdAt: { type: Date, expires: 10},
 });
+// Postschema.index(({ DeadlineIntern: 1 }, { expireAfterSeconds:0 }));
+
 const Form_data = mongoose.model("Post", Postschema);
 
 module.exports = Form_data;

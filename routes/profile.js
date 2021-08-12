@@ -46,6 +46,7 @@ router.get("/myposts", ensureAuth, (req, res) => {
   async function getdata() {
     const mypostdata = req.user.Myposts;
     let response = [];
+    let deleted=[];
     for (let i = 0; i < mypostdata.length; i++) {
       const data = await PostsSchema.findOne(
         {
@@ -53,9 +54,9 @@ router.get("/myposts", ensureAuth, (req, res) => {
         },
         { "File.data": 0 }
       );
-      if (data.Type == 1) {
+      if (data!=null && data.Type == 1) {
         response.push(data);
-      } else if (data.Type == 2) {
+      }else if (data!=null && data.Type == 2) {
         const post = {
           _id: data.id,
           Name: data.Name,
@@ -70,8 +71,22 @@ router.get("/myposts", ensureAuth, (req, res) => {
         };
         response.push(post);
       }
+      else{
+        deleted.push(mypostdata[i].Post_id);
+        const result = await User.updateOne(
+            { _id: req.user.id },
+            {
+              $pull: {
+                Myposts: {
+                  Post_id: mongoose.Types.ObjectId(
+                    mypostdata[i].Post_id
+                  ),
+                },
+              },
+            }
+          );
+        }
     }
-
     res.send(response);
   }
   getdata();

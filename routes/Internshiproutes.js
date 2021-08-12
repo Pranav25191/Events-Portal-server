@@ -10,6 +10,8 @@ const app = express();
 app.use(express.static("public"));
 var fs = require("fs");
 
+// internshipschema.index( { "expireAt": 1 }, { expireAfterSeconds: 0 } )
+
 const storage = multer.diskStorage({
   destination: "/home/noel/Desktop/Events-Portal-server/uploadedFiles",
   filename: function (req, file, cb) {
@@ -59,6 +61,7 @@ router.post("/submit", ensureAuth, (req, res) => {
           });
         }
         console.log(req.body.deadline);
+        console.log(typeof req.body.deadline);
         const datatobeuploaded = new internshipschema({
           Type: 2,
           Name: req.user.Name,
@@ -144,7 +147,7 @@ router.get("/", ensureAuth, (req, res) => {
       };
       datatobesent.push(post);
     }
-    // console.log(datatobesent);
+    console.log(datatobesent);
     res.send(datatobesent);
   };
   get_data();
