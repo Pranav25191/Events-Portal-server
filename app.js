@@ -7,6 +7,7 @@ const Editroutes = require("./routes/edit");
 const teamup_route = require("./routes/teamuproutes");
 const starred = require("./routes/starred");
 const home = require("./routes/home");
+const events = require("./routes/events");
 const internship_route = require("./routes/Internshiproutes");
 const passportSetup = require("./config/passport-setup");
 const mongoose = require("mongoose");
@@ -32,7 +33,8 @@ app.use(
 mongoose
   .connect(
     // "mongodb://localhost:/web_portal",
-    `mongodb+srv://summerproject:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    // `mongodb+srv://summerproject:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    `mongodb+srv://college_portal:Ddik_Uk3.iWh.J4@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {
       useCreateIndex: true,
       useNewUrlParser: true,
@@ -95,6 +97,7 @@ app.use("/Profile", profileroute);
 app.use("/internships", internship_route);
 app.use("/starred", starred);
 app.use("/home", home);
+app.use("/events", events);
 
 app.get("/", ensureGuest, (req, res) => {
   res.redirect("/login");
