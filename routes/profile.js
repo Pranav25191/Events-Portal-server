@@ -70,6 +70,21 @@ router.get("/myposts", ensureAuth, (req, res) => {
           Type: data.Type,
         };
         response.push(post);
+      }else if (data!=null && data.Type == 3) {
+        const post = {
+          _id: data.id,
+          Name: data.Name,
+          User_Id: data.User_Id,
+          Title: data.Title,
+          Venue: data.Venue,
+          Fromdate: data.Fromdate,
+          Todate: data.Todate,
+          Deadline: data.DeadlineEvent,
+          Description: data.Description,
+          Club:data.Club,
+          Type: data.Type,
+        };
+        response.push(post);
       }
       else{
         deleted.push(mypostdata[i].Post_id);

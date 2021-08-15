@@ -33,8 +33,8 @@ app.use(
 mongoose
   .connect(
     // "mongodb://localhost:/web_portal",
-    // `mongodb+srv://summerproject:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
-    `mongodb+srv://college_portal:Ddik_Uk3.iWh.J4@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    `mongodb+srv://summerproject:${keys.mongodbatlas.password}@cluster0.y1pwz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    // `mongodb+srv://college_portal:Ddik_Uk3.iWh.J4@cluster0.of7zi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {
       useCreateIndex: true,
       useNewUrlParser: true,

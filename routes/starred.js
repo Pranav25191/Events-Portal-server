@@ -51,4 +51,37 @@ router.post("/intern/tounstar", ensureAuth, (req, res) => {
   unstarpost();
 });
 
+router.post("/events/tostar", ensureAuth, (req, res) => {
+  const postid = req.body.postid;
+  const starpost = async () => {
+    const saveddata = await User.updateOne(
+      { _id: req.user.id },
+      {
+        $push: {
+          StarredEvents: {
+            Post_id: mongoose.Types.ObjectId(req.body.postid),
+          },
+        },
+      }
+    );
+    res.send("starred");
+  };
+  starpost();
+});
+router.post("/events/tounstar", ensureAuth, (req, res) => {
+  async function unstarpost() {
+    const result = await User.updateOne(
+      { _id: req.user.id },
+      {
+        $pull: {
+          StarredEvents: { Post_id: mongoose.Types.ObjectId(req.body.postid) },
+        },
+      }
+    );
+    // console.log(result);
+    res.send("unstarred");
+  }
+  unstarpost();
+});
+
 module.exports = router;

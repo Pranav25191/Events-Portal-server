@@ -47,8 +47,36 @@ router.get("/", ensureAuth, (req, res) => {
         starredinternarray.push(postdata);
       }
     }
-    console.log(starredinternarray);
-    res.send(starredinternarray);
+
+    for (let i = 0; i < req.user.StarredEvents.length; i++) {
+      const postdata = await postschema.findOne(
+        {
+          _id: req.user.StarredEvents[i].Post_id,
+        },
+        { "Files.data": 0 }
+      );
+      console.log("post", postdata);
+      if (postdata == null || postdata == undefined) {
+        // deleted.push(req.user.StarredIntern[i].Post_id);
+        const result = await User.updateOne(
+          { _id: req.user.id },
+          {
+            $pull: {
+              StarredEvents: {
+                Post_id: mongoose.Types.ObjectId(
+                  req.user.StarredEvents[i].Post_id
+                ),
+              },
+            },
+          }
+        );
+      } else {
+        starredeventarray.push(postdata);
+      }
+    }
+
+    // console.log(starredinternarray);
+    res.send([starredinternarray, starredeventarray]);
   }
   getpost();
   //   async function deletestarpost() {
