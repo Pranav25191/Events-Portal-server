@@ -41,8 +41,12 @@ router.post("/teamup/getpost", ensureAuth, (req, res) => {
       const getpostdata = await PostsSchema.findOne({
         _id: mongoose.Types.ObjectId(postid),
       });
-      // console.log(getpostdata);
-      res.send(getpostdata);
+      console.log("get post data", getpostdata);
+      if (getpostdata != null) {
+        res.send(getpostdata);
+      } else {
+        res.send("null");
+      }
     };
     geteditpost();
   } else {
@@ -160,7 +164,12 @@ router.post("/events/submit", ensureAuth, (req, res) => {
             fileName: flist[i].originalname,
           });
         }
-        if (req.body.deadline != undefined || req.body.deadline != "") {
+        if (
+          req.body.deadline != undefined &&
+          req.body.deadline != "" &&
+          req.body.deadline != null &&
+          req.body.deadline != "-Invalid Date-T"
+        ) {
           const result = await PostsSchema.updateOne(
             { _id: mongoose.Types.ObjectId(req.body.postid) },
             {
@@ -172,6 +181,7 @@ router.post("/events/submit", ensureAuth, (req, res) => {
                 Venue: req.body.venue,
                 Fromdate: req.body.fromdate,
                 Todate: req.body.todate,
+                DeadlineIntern: req.body.todate,
                 Club: req.body.club,
                 DeadlineEvent: req.body.deadline,
                 Description: req.body.description,
@@ -191,6 +201,7 @@ router.post("/events/submit", ensureAuth, (req, res) => {
                 Venue: req.body.venue,
                 Fromdate: req.body.fromdate,
                 Todate: req.body.todate,
+                DeadlineIntern: req.body.todate,
                 Club: req.body.club,
                 Description: req.body.description,
                 Files: filesList,

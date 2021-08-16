@@ -66,6 +66,7 @@ router.post("/submit", ensureAuth, (req, res) => {
           Venue: req.body.venue,
           Fromdate: req.body.fromdate,
           Todate: req.body.todate,
+          DeadlineIntern: req.body.todate,
           Club: req.body.club,
           Description: req.body.description,
           Files: filesList,

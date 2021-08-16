@@ -218,20 +218,24 @@ router.post("/edit", ensureAuth, (req, res) => {
       _id: mongoose.Types.ObjectId(req.body.postid.id),
     });
     // console.log(fetchdata);
-    const post = {
-      _id: fetchdata.id,
-      Name: fetchdata.Name,
-      User_Id: fetchdata.User_Id,
-      Role: fetchdata.RoleIntern,
-      Company: fetchdata.CompanyIntern,
-      Duration: fetchdata.DurationIntern,
-      Branches: fetchdata.BranchesIntern,
-      Stipend: fetchdata.StipendIntern,
-      Deadline: fetchdata.DeadlineIntern,
-      Description: fetchdata.DescriptionIntern,
-      Files: fetchdata.Files,
-    };
-    res.send(post);
+    if (fetchdata != null) {
+      const post = {
+        _id: fetchdata.id,
+        Name: fetchdata.Name,
+        User_Id: fetchdata.User_Id,
+        Role: fetchdata.RoleIntern,
+        Company: fetchdata.CompanyIntern,
+        Duration: fetchdata.DurationIntern,
+        Branches: fetchdata.BranchesIntern,
+        Stipend: fetchdata.StipendIntern,
+        Deadline: fetchdata.DeadlineIntern,
+        Description: fetchdata.DescriptionIntern,
+        Files: fetchdata.Files,
+      };
+      res.send(post);
+    } else {
+      res.send("null");
+    }
   };
   get_data();
 });
