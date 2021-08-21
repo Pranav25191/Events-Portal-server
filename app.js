@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 //for port to port communication.
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://192.168.43.199:3000",
     credentials: true,
   })
 );
@@ -50,7 +50,7 @@ app.use(express.static("public"));
 
 // we are sending all the responses by adding these additional headers.
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://192.168.43.199:3000");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -110,8 +110,8 @@ app.get("/login", ensureGuest, (req, res) => {
 app.get(
   "/auth",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/home",
-    failureRedirect: "http://localhost:3000/login",
+    successRedirect: "http://192.168.43.199:3000/home",
+    failureRedirect: "http://192.168.43.199:3000/login",
   })
 );
 
@@ -119,7 +119,6 @@ app.get(
 //     let starredinternarray=[];
 //     let starredeventarray=[];
 //     for(let i=0;i<req.user.StarredIntern.length;i++){
-
 //     }
 // });
 
